@@ -4,8 +4,8 @@ class ReelWidget extends WP_Widget {
     
     function __construct(){
 		$widget_ops = array( 'classname' => 'reelmultiple', 'description' => 'Display multiple reels' );
-		$control_ops = array( 'width' => 505, 'height' => 350, 'id_base' => 'reelerwidg' );
-		parent::__construct( false, 'Multiple Reel Widget' );
+		$control_ops = array( 'width' => 505, 'height' => 350 );
+		parent::__construct( false, 'Multiple Reel Widget',array(), $control_ops);
 		
 		}
     
@@ -260,7 +260,6 @@ return $new_instance;
 		) );
 		//extract($instance);
 		 // var_dump($instance);
-		  echo $this->number;
         ?>
         <!--start of widget -->
       

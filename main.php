@@ -3,18 +3,20 @@
 /*
 Plugin Name: Multiple Reel
 Plugin URI: http://sabirul-mostofa.blogspot.com
-Description: Add As many information reel in your sidebar
+Description: Add As many information reel in your sidebar(Extended From the Information Reel Plugin by Gopi.R. URL- 
+http://www.gopiplus.com/work/2011/04/16/wordpress-plugin-information-reel/)
 Version: 1.0
 Author: Sabirul Mostofa
 Author URI: http://sabirul-mostofa.blogspot.com
 */
 
 require_once('widget.php');
-var_dump(get_option('widget_reelwidget'));
-exit;
 
 global $wpdb;
 define("WP_MIR_TABLE", $wpdb->prefix . "multiple_reel");
+
+//var_dump(get_option('widget_reelwidget'));
+//exit;
 
 
 $multipleReel = new multipleReel();
@@ -23,7 +25,7 @@ if(isset($multipleReel)) {
 	//add_action('init', array($multipleReel,'redirect'), 1);
 	add_action('admin_menu', array($multipleReel,'CreateMenu'),50);
 	add_action('widgets_init', create_function('', 'return register_widget("ReelWidget");'));	
-	add_action('load-widgets.php', array($multipleReel,'delete_record_from_db'));
+	//add_action('sidebar_admin_setup', array($multipleReel,'delete_record_from_db'));
 	
 }
 
@@ -84,18 +86,22 @@ class multipleReel{
 				$widget_id = $_REQUEST['multi_number'] ;
 				if(!is_numeric($widget_id))
 				$widget_id = trim( str_replace('reelwidget-', '', $_REQUEST['widget-id']) ) ;
+				exit;
 				
 			//Remove From Database
 			
 				}
-		?>
-	
-		<?php
+				else
+				return;
+		
+		//for working ajax 
 		}
 		
 	function add_scripts(){
 		//if(preg_match('/multipleReel/',$_SERVER['REQUEST_URI']) || preg_match('/wpManageVideo/',$_SERVER['REQUEST_URI'])){
-					
+				if(is_admin()):	
+				wp_admin_css( 'widgets' );
+			wp_enqueue_script('admin-widgets');
 			wp_enqueue_script('jquery');
             wp_enqueue_script('reel_admin_script',plugins_url('/' , __FILE__).'js/script.js');	
             wp_localize_script('reel_admin_script', 'reelMultiple',
@@ -108,6 +114,7 @@ array(
 
   wp_register_style('admin_reel_css', plugins_url('/' , __FILE__).'css/style.css', false, '1.0.0');
   wp_enqueue_style('admin_reel_css');
+  endif;
     
  //}
 	
@@ -149,13 +156,66 @@ array(
 	
 	
 	function OptionsPage( ){
-		?>
+		
+		$widgets = array();
+		$wiarray = get_option('widget_reelwidget');
+		
+		var_dump($wiarray);
+		var_dump(get_option('sidebars_widgets'));
 	
-	<div class='ui-sortable' style='min-height:200px;bacgkround-color:green;border:1px solid black'>
-	<input type='text' name='2'/>
-	<input type='text' name='hello'/>
+		foreach($wiarray as $key => $value){
+		if(empty($value))
+		  unset($wiarray[$key]);
+		 elseif(is_numeric($key))
+		   $widgets[]=$key;
+	      }
+	     update_option('widget_reelwidget',$wiarray);
+	      
+	      var_dump($widgets);
+	      foreach($widgets as $widget):
+	      extract($wiarray[$widget]);
+	            
+		?>
+  <div style="width:60%">		
+     <div class="widget">	
+	   <div class="widget-top">
+	   
+		<div class="widget-title-action">
+			<a class="widget-action"></a>
+		</div>
+		
+		<div class="widget-title"><h4><?php echo $IR_Title ?><span class="in-widget-title"></span></h4></div>
+		
+		</div>
+
+	<div class="widget-inside">
+	<form method="post" action="">
+	<div class="widget-content">
+		<p><label for="widget-search-2-title">Title: <input type="text" value="" name="widget-search[2][title]" id="widget-search-2-title" class="widefat"></label></p>
 	</div>
+
+
+	<div class="widget-control-actions">
+		<div class="alignleft">
+		<a href="#remove" class="widget-control-remove">Delete</a> |
+		<a href="#close" class="widget-control-close">Close</a>
+		</div>
+		<div class="alignright">
+		<img alt="" title="" class="ajax-feedback " src="<?php echo esc_url( admin_url( 'images/wpspin_dark.gif' ) ); ?>" style="visibility: hidden;">
+		<input type="submit" value="Save" class="button-primary" id="saveMIR" >		</div>
+		<br class="clear">
+	</div>
+	</form>
+	</div>
+
+
+</div>
+</div>
+
+	
 		<?php
+		
+		endforeach;
 	
 	}//endof options page
 	
