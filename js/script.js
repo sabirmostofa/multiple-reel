@@ -109,7 +109,7 @@
 			},
 			
 		success: function(data){
-			$('.messageBox').html(data);
+			//$('.messageBox').html(data);
 			tr.remove();
 			//$('#linkHolder'+buttonId).append(data);
 			}
@@ -153,18 +153,7 @@ jQuery(document).ready(function($){
 		var IR_type = $( '#'+'IR_type'+buttonId).val();
 		var IR_status = $( '#'+'IR_status'+buttonId).val();
 		var IR_order = $( '#'+'IR_order'+buttonId).val();
-		
-		/*
-		var vars = new Array();
-		vars['IR_path'] = IR_path;
-		vars['IR_link'] = IR_link;
-		vars['IR_target'] = IR_target;
-		vars['IR_title'] = IR_title;
-		vars['IR_desc'] = IR_desc;
-		vars['IR_type'] = IR_type;
-		vars['IR_status'] = IR_status;
-		vars['IR_order'] = IR_order;
-		*/
+
 		
 		// sending this way works only in Ajax
 var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR_status, IR_order);
@@ -195,6 +184,7 @@ var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR
 			
 		success: function(data){
 			$('#linkHolder'+buttonId).append(data);
+			$('#message'+buttonId).html('Information Saved Successfully');
 			//rebind
 			$('.actionGet a').bind('click',$.fn.IRactionGet);
 			}

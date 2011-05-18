@@ -22,10 +22,8 @@ define('WP_MIR_TABLE', 'wp_multiple_reel');
 $multipleReel = new multipleReel();
 
 if(isset($multipleReel)) {
-	//add_action('init', array($multipleReel,'redirect'), 1);
 	add_action('admin_menu', array($multipleReel,'CreateMenu'),50);
 	add_action('widgets_init', create_function('', 'return register_widget("ReelWidget");'));	
-	//add_action('sidebar_admin_setup', array($multipleReel,'delete_record_from_db'));
 	
 }
 
@@ -34,8 +32,6 @@ class multipleReel{
 	
 	function __construct(){
 		add_action('admin_enqueue_scripts' , array($this,'add_scripts'));
-		//add_action('wp_print_scripts' , array($this,'front_scripts'));
-        //add_action('wp_print_styles',array($this,'front_css'));		
 		register_activation_hook(__FILE__, array($this, 'create_table'));
 		
 		//ajax hooks
@@ -188,9 +184,7 @@ class multipleReel{
 			
 			function front_scripts(){
 				if(!(is_admin())){
-				//wp_enqueue_script('jquery');
 				wp_enqueue_script('add_video_script',plugins_url('/' , __FILE__).'js/script_front.js');
-				//wp_enqueue_script('jcarousel-front',plugins_url('/' , __FILE__).'js/jquery.jcarousel.min.js');
 			     }
 			}
 				
@@ -205,7 +199,6 @@ class multipleReel{
 		
 
 	function CreateMenu(){
-		//add_submenu_page('theme-options.php','Add From YouTube','Add From YouTube','activate_plugins','multipleReel',array($this,'OptionsPage'));
 	   add_options_page('Multiple Reel', 'wp-multilple-reel', 'administrator', __FILE__, array($this, 'OptionsPage'));
 
 
@@ -215,10 +208,7 @@ class multipleReel{
 	
 	function operate($wiarray){
 		$widgets = array();
-		//$wiarray = get_option('widget_reelwidget');
-		
-		//var_dump($wiarray);
-		//var_dump(get_option('sidebars_widgets'));
+	
 	
 		foreach($wiarray as $key => $value){
 		if(empty($value))
@@ -267,9 +257,7 @@ class multipleReel{
 	      
 	      $res = $wpdb -> get_results("SELECT * FROM wp_multiple_reel where IR_widget_id='$widget'",'ARRAY_A' );
 	   
-	    //var_dump($res[0]);
-	    //exit;
-	     // $result = $wpdb -> get_results("SELECT IR_path,IR_link,IR_title FROM wp_multiple_reel where IR_widget_id='$widget'",'ARRAY_N' );
+	   
 	     
 	     
 	      extract($cur_widgets[$widget]);
@@ -359,7 +347,7 @@ class multipleReel{
       
     </table>
     
-     <div class='messageBox' style='margin:5px;'></div>
+     <div class='updated' id='message<?php echo $widget; ?>' style='visibility:hidden'></div>
      
      
      <table  style='margin-top:10px;' class='widefat' id='linkHolder<?php echo $widget; ?>'>
@@ -389,24 +377,7 @@ class multipleReel{
      </table>
    
      
-    <!-- end of upper part -->
 
-	
-
-<!--
-	<div class="widget-control-actions">
-		<div class="alignleft">
-		<a href="#remove" class="widget-control-remove">Delete</a> |
-		<a href="#close" class="widget-control-close">Close</a>
-		</div>
-		<div class="alignright">
-		<img alt="" title="" class="ajax-feedback " src="<?php echo esc_url( admin_url( 'images/wpspin_dark.gif' ) ); ?>" style="visibility: hidden;">
-		<input type="submit" value="Save" class="button-primary" id="saveMIR" >		</div>
-		<br class="clear">
-	    </div>
-
-	</div>
--->
    <br class="clear">
   </div>
 </div>
