@@ -72,6 +72,8 @@ class multipleReel{
 					    ),
 					array('%d', '%s','%s', '%s','%s','%s','%d','%s','%s','%d', )	
 				 );
+				 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td><a href='#' style='float:left;margin-right:20px' >Edit</a><a href='#'>Delete</a> </td></tr>";
+				 exit;
 			
 			else:
 			
@@ -228,15 +230,23 @@ class multipleReel{
 		
 	        $cur_widgets = get_option('widget_reelwidget');
             $widgets = $this -> operate($cur_widgets);
-			  
+			 
+		
 			  
 	      
 	      foreach($widgets as $widget):
+	      $res = $wpdb -> get_results("SELECT * FROM wp_multiple_reel where IR_widget_id='$widget'",'ARRAY_A' );
+	   
+	    //var_dump($res[0]);
+	    //exit;
 	     // $result = $wpdb -> get_results("SELECT IR_path,IR_link,IR_title FROM wp_multiple_reel where IR_widget_id='$widget'",'ARRAY_N' );
 	      extract($cur_widgets[$widget]);
+	    
+	        
+	  
 	            
 		?>
-  <div  class='wrap' style="width:60%">		
+  <div  class='wrap' style="width:80%">		
      <div class="widget" style="width:100%">	
 	   
 	   <div class="widget-top">	   
@@ -294,9 +304,9 @@ class multipleReel{
         <td align="left" valign="middle">Display Order:</td>
       </tr>
       <tr>
-        <td width="22%" align="left" valign="middle">
+        <td width="30%" align="left" valign="middle">
                     
-            <select name="IR_status<?php echo $widget; ?>" id="IR_status<?php echo $widget; ?>">
+            <select style="width:40%" name="IR_status<?php echo $widget; ?>" id="IR_status<?php echo $widget; ?>">
             <option value='YES'>Yes</option>
             <option value='NO'>No</option>
           </select>
@@ -310,13 +320,43 @@ class multipleReel{
       	<div class="alignleft">
               <input name="publish<?php echo $widget; ?>" lang="publish" class="button-primary" id='publish<?php echo $widget; ?>' value="Save" type="submit" />
                <input name="cancel<?php echo $widget; ?>" lang="publish" class="button-primary"  value="Cancel" type="button" /></td>
-               <div class='messageBox'></div>
+               
           	</div>
           </td>
       </tr>
       
     </table>
     
+     <div class='messageBox'></div>
+     
+     
+     <table class='widefat' id='linkHolder<?php echo $widget; ?>'>
+     <thead>
+     <tr>
+    
+     <th>Title</th>
+     <th>Target</th>
+     <th>Order</th>
+     <th>Display</th>
+     <th>Action</th>
+   
+     </tr>
+     </thead>
+     <?php
+     
+     if($res)
+     foreach($res as $key => $value)
+     if(is_array($value) && !empty($value) ){
+		 extract($value); 
+         echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td><a href='#' style='float:left;margin-right:20px' >Edit</a><a href='#'>Delete</a> </td></tr>";
+     }
+     
+     
+     ?>
+     
+     </table>
+   
+     
     <!-- end of upper part -->
 
 	

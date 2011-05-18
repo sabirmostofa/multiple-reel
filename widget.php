@@ -31,14 +31,15 @@ class ReelWidget extends WP_Widget {
 		
         
      //$instance= wp_parse_args($instance, array(   ));
-        ?>
-              <?php echo $before_widget; ?>
-   
-   <?php 
+     extract($instance);
+       
+    echo $before_widget.$before_title; 
+    echo $IR_Title.$after_title;
+      
   global $wpdb;
 	
 	
-	extract($instance);
+	
 	
 	
 	if(!is_numeric($IR_SameTime)){ $IR_SameTime = 5; }
