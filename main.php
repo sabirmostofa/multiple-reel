@@ -13,7 +13,7 @@ Author URI: http://sabirul-mostofa.blogspot.com
 require_once('widget.php');
 
 global $wpdb;
-define("WP_MIR_TABLE", $wpdb->prefix . "multiple_reel");
+define('WP_MIR_TABLE', 'wp_multiple_reel');
 
 //var_dump(get_option('widget_reelwidget'));
 //exit;
@@ -49,9 +49,11 @@ class multipleReel{
 			global $wpdb;
 			
 			$data = array('IR_path', 'IR_link', 'IR_target', 'IR_title', 'IR_desc', 'IR_type', 'IR_status', 'IR_order');
-			
+			if( isset($_REQUEST['data']) ){
 			$data = array_combine($data, $_REQUEST['data'] );
 			extract($data);
+			
+		      }
 			$widget_id = (int)$_REQUEST['id'] ;
 			
 			if( $_REQUEST['job'] == 'save' ):
@@ -72,11 +74,18 @@ class multipleReel{
 					    ),
 					array('%d', '%s','%s', '%s','%s','%s','%d','%s','%s','%d', )	
 				 );
-				 $single_id = $wpdb ->query('SELECT max(IR_id) FROM wp_multiple_reel');
-				 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td><a class='{$single_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$single_id}' href='#'>Delete</a> </td></tr>";
+				 $single_id = $wpdb -> get_var('SELECT max(IR_id) FROM wp_multiple_reel');
+				 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$single_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$single_id}' href='#'>Delete</a> </td></tr>";
 				 exit;
 			
-			else:
+			elseif($_REQUEST['job'] == 'delete'):			
+				$wpdb -> query("delete from wp_multiple_reel where IR_id='$widget_id'");
+				exit;
+			elseif($_REQUEST['job'] == 'update'):
+			    exit;
+			elseif($_REQUEST['job'] == 'edit'):
+			
+			    exit;	
 			
 			
 			endif;
@@ -339,7 +348,7 @@ class multipleReel{
      foreach($res as $key => $value)
      if(is_array($value) && !empty($value) ){
 		 extract($value); 
-         echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td><a class='{$IR_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$IR_id}' href='#'>Delete</a> </td></tr>";
+         echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$IR_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$IR_id}' href='#'>Delete</a> </td></tr>";
      }
      
      
