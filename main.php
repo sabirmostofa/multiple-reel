@@ -46,15 +46,41 @@ class multipleReel{
 		// Ajax Functions
 		
 		function save_data(){
+			global $wpdb;
 			
 			$data = array('IR_path', 'IR_link', 'IR_target', 'IR_title', 'IR_desc', 'IR_type', 'IR_status', 'IR_order');
 			
 			$data = array_combine($data, $_REQUEST['data'] );
-			var_dump ( $data);
-			$widget_id = $_REQUEST['id'] ;
-			exit;
+			extract($data);
+			$widget_id = (int)$_REQUEST['id'] ;
+			
+			if(! $this -> exists_in_table($widget_id) ):
+			
+			$result = $wpdb -> insert('wp_multiple_reel',
+					array(
+					    'IR_widget_id' => $widget_id,
+					     'IR_path' => $IR_path,
+					     'IR_link' => $IR_link,
+					     'IR_target' => $IR_path,
+					     'IR_title' => $IR_title,
+					     'IR_desc' => $IR_desc,
+					     'IR_order' => $IR_order,
+					     'IR_status' => $IR_status,
+					     'IR_type' => $IR_type,
+					     'IR_date' => 0					
+					
+					    ),
+					array('%d', '%s','%s', '%s','%s','%s','%d','%s','%s','%d', )	
+				 );
+			
+			else:
 			
 			
+			endif;
+			
+			var_dump($result);
+			
+			exit;			
 			}
 		
 		
@@ -288,7 +314,7 @@ class multipleReel{
           	</div>
           </td>
       </tr>
-      <input name="IR_id" id="IR_id" type="hidden" value="<?php echo $IR_id_x; ?>">
+      
     </table>
     
     <!-- end of upper part -->
@@ -401,10 +427,10 @@ class multipleReel{
    
    
    //Crude functions
-        function exists_in_table($video_id){
+        function exists_in_table($id){
 			global $wpdb;
 			//$wpdb = new wpdb( DB_USER, DB_PASSWORD, DB_NAME, DB_HOST );
-			$result=$wpdb->get_results( "SELECT video_title FROM wp_video_list where  video_id='$video_id'" );
+			$result=$wpdb->get_results( "SELECT IR_id FROM wp_multiple_reel where  IR_widget_id='$id'" );
 			if(empty($result))return false;
 			else return true;			
 
