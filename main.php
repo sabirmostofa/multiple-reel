@@ -58,7 +58,8 @@ class multipleReel{
 		$sSql = $sSql . "`IR_status` VARCHAR( 10 ) NOT NULL ,";
 		$sSql = $sSql . "`IR_type` VARCHAR( 100 ) NOT NULL ,";
 		$sSql = $sSql . "`IR_date` INT NOT NULL ,";
-		$sSql = $sSql . "PRIMARY KEY ( `IR_id` )";
+		$sSql = $sSql . "PRIMARY KEY ( `IR_id` ),";
+		$sSql = $sSql . "key `widget_id` ( `IR_widget_id` )";
 		$sSql = $sSql . ")";
 		$wpdb->query($sSql);
 		$sSql = "INSERT INTO `". WP_MIR_TABLE . "` (`IR_path`, `IR_link`, `IR_target` , `IR_title` , `IR_desc` , `IR_order` , `IR_status` , `IR_type` , `IR_date`)"; 
@@ -105,11 +106,11 @@ class multipleReel{
 			wp_enqueue_script('jquery');
             wp_enqueue_script('reel_admin_script',plugins_url('/' , __FILE__).'js/script.js');	
             wp_localize_script('reel_admin_script', 'reelMultiple',
-array(
-'ajaxurl'=>admin_url('admin-ajax.php'),
-'pluginurl' => plugins_url('/' , __FILE__)
+			array(
+			'ajaxurl'=>admin_url('admin-ajax.php'),
+			'pluginurl' => plugins_url('/' , __FILE__)
 
-)
+			)
 );	
 
   wp_register_style('admin_reel_css', plugins_url('/' , __FILE__).'css/style.css', false, '1.0.0');
@@ -148,6 +149,38 @@ array(
 	
 	
 	
+	function operate($wiarray){
+		$widgets = array();
+		//$wiarray = get_option('widget_reelwidget');
+		
+		//var_dump($wiarray);
+		//var_dump(get_option('sidebars_widgets'));
+	
+		foreach($wiarray as $key => $value){
+		if(empty($value))
+		  unset($wiarray[$key]);
+		 //elseif(is_numeric($key))
+		   //$widgets[]=$key;
+	      }
+	     update_option('widget_reelwidget',$wiarray);
+	      
+	      //var_dump($widgets);
+	      
+	      $all_widgets=get_option('sidebars_widgets');
+	      
+	      foreach($all_widgets as $cat => $sidebar)
+			  if($cat != 'wp_inactive_widgets' && !empty($sidebar) && is_array($sidebar))
+			    foreach($sidebar as $widget_name)
+			        if( strstr( $widget_name,'reelwidget' ) )
+			          $widgets[] = trim( str_replace('reelwidget-', '', $widget_name ));
+			            
+			  
+		//var_dump($widgets); 
+		
+		return $widgets;
+		
+		}
+	
 	
 	
 	
@@ -156,45 +189,100 @@ array(
 	
 	
 	function OptionsPage( ){
+		global $wpdb;
 		
-		$widgets = array();
-		$wiarray = get_option('widget_reelwidget');
-		
-		var_dump($wiarray);
-		var_dump(get_option('sidebars_widgets'));
-	
-		foreach($wiarray as $key => $value){
-		if(empty($value))
-		  unset($wiarray[$key]);
-		 elseif(is_numeric($key))
-		   $widgets[]=$key;
-	      }
-	     update_option('widget_reelwidget',$wiarray);
+	        $cur_widgets = get_option('widget_reelwidget');
+            $widgets = $this -> operate($cur_widgets);
+			  
+			  
 	      
-	      var_dump($widgets);
 	      foreach($widgets as $widget):
-	      extract($wiarray[$widget]);
+	     // $result = $wpdb -> get_results("SELECT IR_path,IR_link,IR_title FROM wp_multiple_reel where IR_widget_id='$widget'",'ARRAY_N' );
+	      extract($cur_widgets[$widget]);
 	            
 		?>
-  <div style="width:60%">		
-     <div class="widget">	
-	   <div class="widget-top">
+  <div  class='wrap' style="width:60%">		
+     <div class="widget" style="width:100%">	
 	   
-		<div class="widget-title-action">
+	   <div class="widget-top">	   
+		 <div class="widget-title-action">
 			<a class="widget-action"></a>
-		</div>
+	     </div>
 		
 		<div class="widget-title"><h4><?php echo $IR_Title ?><span class="in-widget-title"></span></h4></div>
 		
-		</div>
+	</div><!-- end of widget top -->
 
 	<div class="widget-inside">
-	<form method="post" action="">
-	<div class="widget-content">
-		<p><label for="widget-search-2-title">Title: <input type="text" value="" name="widget-search[2][title]" id="widget-search-2-title" class="widefat"></label></p>
-	</div>
+	
+	<!-- Start of table -->
+	<table width="100%">
+      <tr>
+        <td colspan="2" style='width:100%' align="left" valign="middle">Enter image url:</td>
+      </tr>
+      <tr>
+        <td colspan="2" style='width:100%' align="left" valign="middle"><input style='width:100%' name="IR_path" type="text" id="IR_path" value="<?php echo $IR_path_x; ?>"  /></td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle">Enter target link:</td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle"><input style='width:100%' name="IR_link" type="text" id="IR_link" value="<?php echo $IR_link_x; ?>"  /></td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle">Enter target option:</td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle"><input name="IR_target" type="text" id="IR_target" value="<?php echo $IR_target_x; ?>"  />
+          ( _blank, _parent, _self, _new )</td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle">Enter image title:</td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle"><input style='width:100%' name="IR_title" type="text" id="IR_title" value="<?php echo $IR_title_x; ?>"  /></td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle">Enter image description:</td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle"><textarea style='width:100%' name="IR_desc" type="text" id="IR_desc" value="<?php echo $IR_desc_x; ?>" > </textarea></td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle">Enter gallery type (This is to group the images):</td>
+      </tr>
+      <tr>
+        <td colspan="2" align="left" valign="middle"><input name="IR_type" type="text" id="IR_type" value="<?php echo $IR_type_x; ?>"  /></td>
+      </tr>
+      <tr>
+        <td align="left" valign="middle">Display Status:</td>
+        <td align="left" valign="middle">Display Order:</td>
+      </tr>
+      <tr>
+        <td width="22%" align="left" valign="middle"><select name="IR_status" id="IR_status">
+            <option value="">Select</option>
+            <option value='YES' <?php if($IR_status_x=='YES') { echo 'selected' ; } ?>>Yes</option>
+            <option value='NO' <?php if($IR_status_x=='NO') { echo 'selected' ; } ?>>No</option>
+          </select></td>
+        <td width="78%" align="left" valign="middle"><input name="IR_order" type="text" id="IR_rder" size="10" value="<?php echo $IR_order_x; ?>" maxlength="3" /></td>
+      </tr>
+      <tr>
+        <td height="35" colspan="2" align="left" valign="bottom"><table width="100%">
+            <tr>
+              <td width="50%" align="left"><input name="publish" lang="publish" class="button-primary" value="Save" type="submit" />
+                <input name="publish" lang="publish" class="button-primary" onclick="IR_redirect()" value="Cancel" type="button" /></td>
+              <td width="50%" align="right"></td>
+            </tr>
+          </table></td>
+      </tr>
+      <input name="IR_id" id="IR_id" type="hidden" value="<?php echo $IR_id_x; ?>">
+    </table>
+    
+    <!-- end of upper part -->
 
+	
 
+<!--
 	<div class="widget-control-actions">
 		<div class="alignleft">
 		<a href="#remove" class="widget-control-remove">Delete</a> |
@@ -204,11 +292,12 @@ array(
 		<img alt="" title="" class="ajax-feedback " src="<?php echo esc_url( admin_url( 'images/wpspin_dark.gif' ) ); ?>" style="visibility: hidden;">
 		<input type="submit" value="Save" class="button-primary" id="saveMIR" >		</div>
 		<br class="clear">
-	</div>
-	</form>
-	</div>
+	    </div>
 
-
+	</div>
+-->
+   <br class="clear">
+  </div>
 </div>
 </div>
 
