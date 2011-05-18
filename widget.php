@@ -5,7 +5,7 @@ class ReelWidget extends WP_Widget {
     function __construct(){
 		$widget_ops = array( 'classname' => 'reelmultiple', 'description' => 'Display multiple reels' );
 		$control_ops = array( 'width' => 505, 'height' => 350 );
-		parent::__construct( false, 'Multiple Reel Widget',array(), $control_ops);
+		parent::__construct( false, 'Multiple Reel Widget');
 		
 		}
     
@@ -280,7 +280,7 @@ return $new_instance;
 	<p>Text Length:<br/><input  style="width: 100px;" type="text" value="<?php echo $instance['IR_TextLength'] ?>"
 	 name="<?php echo  $this->get_field_name('IR_TextLength') ?>" id="<?php echo  $this->get_field_id('IR_TextLength') ?>" /> (YES/NO)</p>
 
-	<p>Fallery Group:<br/><input  style="width: 100px;" type="text" value="<?php echo $instance['IR_type'] ?>"
+	<p>Gallery Group:<br/><input  style="width: 100px;" type="text" value="<?php echo $instance['IR_type'] ?>"
 	 name="<?php echo  $this->get_field_name('IR_type') ?>" id="<?php echo  $this->get_field_id('IR_type') ?>" /> </p>
 	
 	<p>Random Option:<br/><input  style="width: 100px;" type="text" value="<?php echo $instance['IR_random']?>" 

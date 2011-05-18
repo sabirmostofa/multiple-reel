@@ -77,22 +77,49 @@ class multipleReel{
 				 $single_id = $wpdb -> get_var('SELECT max(IR_id) FROM wp_multiple_reel');
 				 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$single_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$single_id}' href='#'>Delete</a> </td></tr>";
 				 exit;
+				 
+				 
 			
 			elseif($_REQUEST['job'] == 'delete'):			
 				$wpdb -> query("delete from wp_multiple_reel where IR_id='$widget_id'");
 				exit;
+				
+				
+				
 			elseif($_REQUEST['job'] == 'update'):
-			    exit;
-			elseif($_REQUEST['job'] == 'edit'):
+			$IR_id = (int)$_REQUEST['irId'];
+			 
+			 $res = $wpdb -> update('wp_multiple_reel',
+					array(
+					    'IR_widget_id' => $widget_id,
+					     'IR_path' => $IR_path,
+					     'IR_link' => $IR_link,
+					     'IR_target' => $IR_path,
+					     'IR_title' => $IR_title,
+					     'IR_desc' => $IR_desc,
+					     'IR_order' => $IR_order,
+					     'IR_status' => $IR_status,
+					     'IR_type' => $IR_type,
+					     'IR_date' => 0					
+					
+					    ),
+					    array( 'IR_id' => $IR_id ),
+					array('%d', '%s','%s', '%s','%s','%s','%d','%s','%s','%d', ),
+					array('%d')	
+				 );		
+			 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$single_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$single_id}' href='#'>Delete</a> </td></tr>";
+
 			
+			    exit;
+			    
+			elseif($_REQUEST['job'] == 'edit'):
+			  $json = $wpdb -> get_row("select * from wp_multiple_reel where IR_id='$widget_id'",'ARRAY_A');
+			   echo json_encode($json);
 			    exit;	
 			
 			
 			endif;
-			echo 'hello';
-			var_dump($result);
-			var_dump($_REQUEST['job']);
-			
+						
 			exit;			
 			}
 		
@@ -209,7 +236,7 @@ class multipleReel{
 			  if($cat != 'wp_inactive_widgets' && !empty($sidebar) && is_array($sidebar))
 			    foreach($sidebar as $widget_name)
 			        if( strstr( $widget_name,'reelwidget' ) )
-			          $widgets[] = trim( str_replace('reelwidget-', '', $widget_name ));
+			          $widgets[] = $cat.'@'.(trim( str_replace('reelwidget-', '', $widget_name )));
 			            
 			  
 		//var_dump($widgets); 
@@ -234,7 +261,10 @@ class multipleReel{
 		
 			  
 	      
-	      foreach($widgets as $widget):
+	      foreach($widgets as $mix):
+	       $ar = explode('@',$mix);
+	       $widget = $ar[1];
+	      
 	      $res = $wpdb -> get_results("SELECT * FROM wp_multiple_reel where IR_widget_id='$widget'",'ARRAY_A' );
 	   
 	    //var_dump($res[0]);
@@ -254,7 +284,7 @@ class multipleReel{
 			<a class="widget-action"></a>
 	     </div>
 		
-		<div class="widget-title"><h4><?php echo $IR_Title ?><span class="in-widget-title"></span></h4></div>
+		<div class="widget-title"><h4><?php echo $IR_Title ?><span style='margin-left:30px' class="in-widget-title"><?php echo $ar[0] ?></span></h4></div>
 		
 	</div><!-- end of widget top -->
 
@@ -385,85 +415,7 @@ class multipleReel{
 		
 		endforeach;
 	
-	}//endof options page
-	
-	
-	/*
- * SUBMENU PAGE Manage Video
- * 
- * */	
-	
-	function videoManage(){
-	?>
-		<div style="text-align:center;margin 15px 0"> <h3>Manage Video Playlist</h3></div>
-		<div class="wrap">
-					<table class="widefat">
-						<thead>
-							<tr>
-								<th>Video Title</th>
-								<th>Thumbnail</th>
-								<th>Status</th>
-								<th>Action</th>
-								<th>Remove</th>
-							</tr>
-						</thead>
-						<tfoot>
-							<tr>
-								<th>Video Title</th>
-								<th>Thumbnail</th>
-								<th>Status</th>
-								<th>Action</th>
-								<th>Remove</th>
-							</tr>
-						</tfoot>
-						<tbody>
-							
-						<?php
-						global $wpdb;
-						$result = $wpdb->get_results( "SELECT video_title,video_id,video_stat FROM wp_video_list",ARRAY_N );			 
-						foreach($result as $single):
-						$title = $single[0];
-						$id= $single[1];
-						$stat = $single[2];
-						$image = 'http://i.ytimg.com/vi/'.$id.'/1.jpg';
-						
-						echo '<td>',$title,'</td>';
-						echo '<td>','<img src="'.$image.'"/>','</td>';
-						
-						if($stat == 1)
-						echo '<td>',Active,'</td>';
-						else 
-						echo '<td>',Suspended,'</td>'; 
-						
-						if($stat == 1)
-						echo '<td><button id="',$id,'" class="action">Suspend</button></td>'; 
-						else 
-						echo '<td><button id="',$id,'" class="action">Add</button></td>';
-						
-						echo '<td><button class="remove">Remove</button></td></tr>';
-						
-						endforeach;
-							
-						?>
-						
-							
-						</tbody>
-					</table>
-				</div>
-		
-
-<?php
-       }// end of video manage submenu page
-       
-       
-       
-     
-		   
-		   
-	
-   
- 
-   
+	}//endof options page   
    
    
    //Crude functions

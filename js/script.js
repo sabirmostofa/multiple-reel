@@ -21,15 +21,23 @@
 		
 		$('#table'+ id +' input').each(function(i){			
 			if( $(this).val() != 'Save' && $(this).val() != 'Cancel'
-			&& $(this).val() != '_blank' && $(this).val() != 'widget' )
+			&& $(this).val() != '_blank' && $(this).val() != 'widget' 
+			&& $(this).val() != 'Update' && $(this).attr('type') != 'hidden'  )
 			$(this).val(''); 
 			 
 			 });
+			 $('#publish'+id).val('Save');
+			 
+			 if($('#irId').length != 0) $('#irId').remove();
 	 };
 	 
 	 $.fn.IRactionGet = function(e){
 		e.preventDefault();
+		var buttonId = $(this).parents('.widefat').attr('id');
+				
+		buttonId = Number(buttonId.replace('linkHolder',''));		
 		
+		 
 		var id=($(this).attr('class'));
 		
 		var tr =$(this).parent().parent();
@@ -37,9 +45,11 @@
 		switch($(this).text()){
 			
 			case 'Edit':
+			$(this).parent().append('<input type="hidden" '+ 'value="'+id+'" id="irId"' +'/>');
 			   $.ajax(
 		    {
 			type : "post",
+			dataType : 'json',
 			url : ajaxurl,
 		    timeout : 5000,
 		    
@@ -51,7 +61,33 @@
 			},
 			
 		success: function(data){
-			$('.messageBox').html(data);
+		var IR_path = data['IR_path'];
+		$( '#'+'IR_path'+buttonId).val(IR_path);
+		
+		var IR_link = data['IR_link'];
+		$( '#'+'IR_link'+buttonId).val(IR_link);
+		
+		var IR_target = data['IR_target'];
+		$( '#'+'IR_target'+buttonId).val(IR_target);
+		
+		var IR_title = data['IR_title'];
+		$( '#'+'IR_title'+buttonId).val(IR_title);
+		
+		var IR_desc = data['IR_desc'];
+		$( '#'+'IR_desc'+buttonId).val(IR_desc);
+		
+		var IR_type = data['IR_type'];
+		$( '#'+'IR_type'+buttonId).val(IR_type);
+		
+		var IR_status = data['IR_status'];
+		$( '#'+'IR_status'+buttonId).val(IR_status);
+		
+		var IR_order = data['IR_order'];
+		$( '#'+'IR_order'+buttonId).val(IR_order);
+		
+		$('#publish'+buttonId).val('Update');
+			
+		//$('.messageBox').html(data);
 			//$('#linkHolder'+buttonId).append(data);
 			}
 	       });
@@ -102,7 +138,7 @@ jQuery(document).ready(function($){
 		
 	
 		
-		var buttonId = ($(this).attr('value') == 'Save') ? 
+		var buttonId = ($(this).attr('value') == 'Save' || $(this).attr('value') == 'Update' ) ? 
 		$(this).attr('name').replace('publish', '') : $(this).attr('name').replace('cancel', ''); 
 		
 		
@@ -118,6 +154,7 @@ jQuery(document).ready(function($){
 		var IR_status = $( '#'+'IR_status'+buttonId).val();
 		var IR_order = $( '#'+'IR_order'+buttonId).val();
 		
+		/*
 		var vars = new Array();
 		vars['IR_path'] = IR_path;
 		vars['IR_link'] = IR_link;
@@ -127,7 +164,7 @@ jQuery(document).ready(function($){
 		vars['IR_type'] = IR_type;
 		vars['IR_status'] = IR_status;
 		vars['IR_order'] = IR_order;
-		
+		*/
 		
 		// sending this way works only in Ajax
 var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR_status, IR_order);
@@ -166,6 +203,39 @@ var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR
 			break;
 			
 			case 'Update':
+				if ($.fn.IRcheckData(buttonId) == false){ 
+				alert('You need to fill all the fields');
+				return;
+				}
+			
+			var irId = $('#irId').attr('value');
+				$.ajax(
+		    {
+			type : "post",
+			url : ajaxurl,
+		    timeout : 5000,
+		    
+		    data : {
+			 'action':'save-data',
+			 'id' : buttonId,
+			 'irId' : irId,
+			 'data' : test,
+			 'job' : 'update'			 
+			  
+			},
+			
+		success: function(data){
+			//$('.messageBox').html(data);
+			jQuery( '.'+ irId + ':first' ).parent().parent().remove();
+			$('#linkHolder'+buttonId).append(data);
+			
+			$.fn.IRcancelData(buttonId);
+			//rebind
+			$('.actionGet a').click($.fn.IRactionGet);
+			}
+	       });	
+			
+			
 			break;
 			
 			case 'Cancel':
