@@ -249,7 +249,7 @@ class multipleReel{
             $widgets = $this -> operate($cur_widgets);
 			 
 		
-		echo '<div style="margin-top:30px" class="wrap"><h3>Active Multireel widgets </h3></div>';  
+		echo '<div style="margin-top:30px" class="wrap"><h3>Active Multi-Reel widgets </h3></div>';  
 	      
 	      foreach($widgets as $mix):
 	       $ar = explode('@',$mix);
