@@ -1,12 +1,50 @@
 
+
+(function($){
+	
+	$.fn.IRcheckData = function(id){		
+		var test = true;	
+		
+		 if( $('#table'+ id +' textarea').val() == '' )return false;	
+				
+		$('#table'+ id +' input').each(function(i){
+        if( $(this).val() == '')
+			test = false;
+         });
+         return test;
+			
+	};
+	
+	
+	$.fn.IRcancelData = function(id){
+		$('#table'+ id +' textarea').val('');
+		
+		$('#table'+ id +' input').each(function(i){			
+			if( $(this).val() != 'Save' && $(this).val() != 'Cancel'
+			&& $(this).val() != '_blank' && $(this).val() != 'widget' )
+			$(this).val(''); 
+			 
+			 });
+	 };
+		
+	
+		
+
+})(jQuery);
+
+
 jQuery(document).ready(function($){
 	
 	$('.button-primary').click(function(){
+		
+	
 		
 		var buttonId = ($(this).attr('value') == 'Save') ? 
 		$(this).attr('name').replace('publish', '') : $(this).attr('name').replace('cancel', ''); 
 		
 		
+		
+
 		
 		var IR_path = $( '#'+'IR_path'+buttonId).val();
 		var IR_link = $( '#'+'IR_link'+buttonId).val();
@@ -36,6 +74,10 @@ var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR
 		switch( $(this).attr('value') ){
 			
 			case 'Save':
+				if ($.fn.IRcheckData(buttonId) == false){ 
+				alert('You need to fill all the fields');
+				return;
+				}
 			
 			$.ajax(
 		    {
@@ -57,6 +99,8 @@ var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR
 			break;
 			
 			case 'Cancel':
+			
+			$.fn.IRcancelData(buttonId);
 			
 			
 			break;
