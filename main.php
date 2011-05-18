@@ -34,8 +34,8 @@ class multipleReel{
 	
 	function __construct(){
 		add_action('admin_enqueue_scripts' , array($this,'add_scripts'));
-		add_action('wp_print_scripts' , array($this,'front_scripts'));
-        add_action('wp_print_styles',array($this,'front_css'));		
+		//add_action('wp_print_scripts' , array($this,'front_scripts'));
+        //add_action('wp_print_styles',array($this,'front_css'));		
 		register_activation_hook(__FILE__, array($this, 'create_table'));
 		
 		//ajax hooks
@@ -63,7 +63,7 @@ class multipleReel{
 					    'IR_widget_id' => $widget_id,
 					     'IR_path' => $IR_path,
 					     'IR_link' => $IR_link,
-					     'IR_target' => $IR_path,
+					     'IR_target' => $IR_target,
 					     'IR_title' => $IR_title,
 					     'IR_desc' => $IR_desc,
 					     'IR_order' => $IR_order,
@@ -94,7 +94,7 @@ class multipleReel{
 					    'IR_widget_id' => $widget_id,
 					     'IR_path' => $IR_path,
 					     'IR_link' => $IR_link,
-					     'IR_target' => $IR_path,
+					     'IR_target' => $IR_target,
 					     'IR_title' => $IR_title,
 					     'IR_desc' => $IR_desc,
 					     'IR_order' => $IR_order,
@@ -107,7 +107,7 @@ class multipleReel{
 					array('%d', '%s','%s', '%s','%s','%s','%d','%s','%s','%d', ),
 					array('%d')	
 				 );		
-			 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$single_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$single_id}' href='#'>Delete</a> </td></tr>";
+			 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$IR_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$IR_id}' href='#'>Delete</a> </td></tr>";
 
 			
 			    exit;
@@ -143,7 +143,7 @@ class multipleReel{
 		$sSql = $sSql . "`IR_type` VARCHAR( 100 ) NOT NULL ,";
 		$sSql = $sSql . "`IR_date` INT NOT NULL ,";
 		$sSql = $sSql . "PRIMARY KEY ( `IR_id` ),";
-		$sSql = $sSql . "key `widget_id` ( `IR_widget_id` )";
+		$sSql = $sSql . "key `widget_id`( `IR_widget_id` )";
 		$sSql = $sSql . ")";
 		$wpdb->query($sSql);
 		
@@ -259,7 +259,7 @@ class multipleReel{
             $widgets = $this -> operate($cur_widgets);
 			 
 		
-			  
+		echo '<div style="margin-top:30px" class="wrap"><h3>Active Multireel widgets </h3></div>';  
 	      
 	      foreach($widgets as $mix):
 	       $ar = explode('@',$mix);
@@ -270,13 +270,15 @@ class multipleReel{
 	    //var_dump($res[0]);
 	    //exit;
 	     // $result = $wpdb -> get_results("SELECT IR_path,IR_link,IR_title FROM wp_multiple_reel where IR_widget_id='$widget'",'ARRAY_N' );
+	     
+	     
 	      extract($cur_widgets[$widget]);
 	    
 	        
 	  
 	            
 		?>
-  <div  class='wrap' style="width:80%">		
+  <div class='wrap' style="width:80%">		
      <div class="widget" style="width:100%">	
 	   
 	   <div class="widget-top">	   
@@ -357,10 +359,10 @@ class multipleReel{
       
     </table>
     
-     <div class='messageBox'></div>
+     <div class='messageBox' style='margin:5px;'></div>
      
      
-     <table class='widefat' id='linkHolder<?php echo $widget; ?>'>
+     <table  style='margin-top:10px;' class='widefat' id='linkHolder<?php echo $widget; ?>'>
      <thead>
      <tr>
     

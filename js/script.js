@@ -130,7 +130,7 @@
 
 jQuery(document).ready(function($){
 	
-	$('.actionGet a').click($.fn.IRactionGet);
+	$('.actionGet a').bind('click',$.fn.IRactionGet);
 		
 		
 	
@@ -196,7 +196,7 @@ var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR
 		success: function(data){
 			$('#linkHolder'+buttonId).append(data);
 			//rebind
-			$('.actionGet a').click($.fn.IRactionGet);
+			$('.actionGet a').bind('click',$.fn.IRactionGet);
 			}
 	       });			
 			
@@ -231,7 +231,7 @@ var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR
 			
 			$.fn.IRcancelData(buttonId);
 			//rebind
-			$('.actionGet a').click($.fn.IRactionGet);
+			$('.actionGet a').bind('click', $.fn.IRactionGet);
 			}
 	       });	
 			
