@@ -84,18 +84,23 @@ var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR
 			type : "post",
 			url : ajaxurl,
 		    timeout : 5000,
+		    
 		    data : {
 			 'action':'save-data',
 			 'id' : buttonId,
-			 'data' : test			 
+			 'data' : test,
+			 'job' : 'save'			 
 			  
 			},
 			
 		success: function(data){
-			$('.messageBox').html(data);
+			$('#linkHolder'+buttonId).append(data);
 			}
 	       });			
 			
+			break;
+			
+			case 'Update':
 			break;
 			
 			case 'Cancel':

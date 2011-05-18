@@ -47,6 +47,7 @@ class ReelWidget extends WP_Widget {
 	if($IR_type == "" ) { $IR_type="widget"; }
 
 	$sSql = "select IR_path,IR_link,IR_target,IR_title,IR_desc from ".WP_MIR_TABLE." where 1=1 and IR_status='YES'";
+	$sSql = $sSql . " and IR_widget_id='".$this->number."'";
 	$sSql = $sSql . " and IR_type='".$IR_type."'";
 	if($IR_random == "YES"){ $sSql = $sSql . " ORDER BY RAND()"; }else{ $sSql = $sSql . " ORDER BY IR_order"; }
 	$IR_data = $wpdb->get_results($sSql);

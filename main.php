@@ -54,7 +54,7 @@ class multipleReel{
 			extract($data);
 			$widget_id = (int)$_REQUEST['id'] ;
 			
-			if(! $this -> exists_in_table($widget_id) ):
+			if( $_REQUEST['job'] == 'save' ):
 			
 			$result = $wpdb -> insert('wp_multiple_reel',
 					array(
@@ -72,15 +72,17 @@ class multipleReel{
 					    ),
 					array('%d', '%s','%s', '%s','%s','%s','%d','%s','%s','%d', )	
 				 );
-				 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td><a href='#' style='float:left;margin-right:20px' >Edit</a><a href='#'>Delete</a> </td></tr>";
+				 $single_id = $wpdb ->query('SELECT max(IR_id) FROM wp_multiple_reel');
+				 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td><a class='{$single_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$single_id}' href='#'>Delete</a> </td></tr>";
 				 exit;
 			
 			else:
 			
 			
 			endif;
-			
+			echo 'hello';
 			var_dump($result);
+			var_dump($_REQUEST['job']);
 			
 			exit;			
 			}
@@ -108,18 +110,7 @@ class multipleReel{
 		$sSql = $sSql . "key `widget_id` ( `IR_widget_id` )";
 		$sSql = $sSql . ")";
 		$wpdb->query($sSql);
-		$sSql = "INSERT INTO `". WP_MIR_TABLE . "` (`IR_path`, `IR_link`, `IR_target` , `IR_title` , `IR_desc` , `IR_order` , `IR_status` , `IR_type` , `IR_date`)"; 
-		$sSql = $sSql . "VALUES ('http://www.gopiplus.com/work/wp-content/uploads/pluginimages/100x100/100x100_1.jpg','http://www.gopiplus.com/work/','_blank','Gopiplus.com','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s.','1', 'YES', 'widget', '0000-00-00 00:00:00');";
-		$wpdb->query($sSql);
-		$sSql = "INSERT INTO `". WP_MIR_TABLE . "` (`IR_path`, `IR_link`, `IR_target` , `IR_title` , `IR_desc` , `IR_order` , `IR_status` , `IR_type` , `IR_date`)"; 
-		$sSql = $sSql . "VALUES ('http://www.gopiplus.com/work/wp-content/uploads/pluginimages/100x100/100x100_2.jpg','http://www.gopiplus.com/work/','_blank','Gopiplus.com','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s.','2', 'YES', 'widget', '0000-00-00 00:00:00');";
-		$wpdb->query($sSql);
-		$sSql = "INSERT INTO `". WP_MIR_TABLE . "` (`IR_path`, `IR_link`, `IR_target` , `IR_title` , `IR_desc` , `IR_order` , `IR_status` , `IR_type` , `IR_date`)"; 
-		$sSql = $sSql . "VALUES ('http://www.gopiplus.com/work/wp-content/uploads/pluginimages/100x100/100x100_3.jpg','http://www.gopiplus.com/work/','_blank','Gopiplus.com','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s.','3', 'YES', 'widget', '0000-00-00 00:00:00');";
-		$wpdb->query($sSql);
-		$sSql = "INSERT INTO `". WP_MIR_TABLE . "` (`IR_path`, `IR_link`, `IR_target` , `IR_title` , `IR_desc` , `IR_order` , `IR_status` , `IR_type` , `IR_date`)"; 
-		$sSql = $sSql . "VALUES ('http://www.gopiplus.com/work/wp-content/uploads/pluginimages/100x100/100x100_4.jpg','http://www.gopiplus.com/work/','_blank','Gopiplus.com','Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s.','4', 'YES', 'widget', '0000-00-00 00:00:00');";
-		$wpdb->query($sSql);
+		
 	}
 	
 
@@ -348,7 +339,7 @@ class multipleReel{
      foreach($res as $key => $value)
      if(is_array($value) && !empty($value) ){
 		 extract($value); 
-         echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td><a href='#' style='float:left;margin-right:20px' >Edit</a><a href='#'>Delete</a> </td></tr>";
+         echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td><a class='{$IR_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$IR_id}' href='#'>Delete</a> </td></tr>";
      }
      
      
