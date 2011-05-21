@@ -183,10 +183,13 @@ var test = new Array(IR_path, IR_link, IR_target, IR_title, IR_desc, IR_type, IR
 			},
 			
 		success: function(data){
+			$.fn.IRcancelData(buttonId);
 			$('#linkHolder'+buttonId).append(data);
 			//$('#message'+buttonId).html('Information Saved Successfully');
 			//rebind
 			$('.actionGet a').bind('click',$.fn.IRactionGet);
+			
+			
 			}
 	       });			
 			

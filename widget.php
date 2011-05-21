@@ -32,7 +32,7 @@ class ReelWidget extends WP_Widget {
         
      //$instance= wp_parse_args($instance, array(   ));
      extract($instance);
-       
+   
     echo $before_widget.$before_title; 
     echo $IR_Title.$after_title;
       
@@ -54,7 +54,13 @@ class ReelWidget extends WP_Widget {
 	
 	?>
     <style type="text/css">
-	.IR-regimage img {
+    .IR-regimage<?php echo $this->number ?>{
+		height: <?php echo $IR_Height.'px' ?>;
+		float:left;
+		
+		}
+    
+	.IR-regimage<?php echo $this->number ?> img {
 		float: left;
 		vertical-align:bottom;
 		padding: 3px;
@@ -67,11 +73,11 @@ class ReelWidget extends WP_Widget {
 		$IRhtml = "";
 		foreach ( $IR_data as $IR_data ) 
 		{
-			$IR_path = mysql_real_escape_string(trim($IR_data->IR_path));
-			$IR_link = mysql_real_escape_string(trim($IR_data->IR_link));
-			$IR_target = mysql_real_escape_string(trim($IR_data->IR_target));
-			$IR_title = mysql_real_escape_string(trim($IR_data->IR_title));
-			$IR_desc = mysql_real_escape_string(trim($IR_data->IR_desc));
+            $IR_path = mysql_escape_string(trim($IR_data->IR_path));
+			$IR_link =  mysql_escape_string(trim($IR_data->IR_link));
+			$IR_target =  mysql_escape_string(trim($IR_data->IR_target));
+			$IR_title =  mysql_escape_string(trim($IR_data->IR_title));
+			$IR_desc =  mysql_escape_string(trim($IR_data->IR_desc));
 			
 			if(is_numeric($IR_TextLength))
 			{
@@ -83,19 +89,22 @@ class ReelWidget extends WP_Widget {
 			
 			$IR_Heights = $IR_Height."px";	
 			
+			$test_Height = ($IR_Height-18).'px';
+			
+			
 			$IRhtml = $IRhtml . "<div class='IR_div' style='height:$IR_Heights;padding:1px 0px 1px 0px;'>"; 
 			
 			if($IR_path <> "" )
 			{
-				$IRhtml = $IRhtml . "<div class='IR-regimage'>"; 
-				$IRjsjs = "<div class=\'IR-regimage\'>"; 
+				$IRhtml = $IRhtml . "<div class='IR-regimage{$this->number}'>"; 
+				$IRjsjs = "<div class=\'IR-regimage{$this->number}\'>"; 
 				if($IR_link <> "" ) 
 				{ 
 					$IRhtml = $IRhtml . "<a href='$IR_link'>"; 
 					$IRjsjs = $IRjsjs . "<a href=\'$IR_link\'>";
 				} 
-				$IRhtml = $IRhtml . "<img style='width:100px;height:100px' src='$IR_path' al='Test' />"; 
-				$IRjsjs = $IRjsjs . "<img style=\'width:100px;height:100px\' src=\'$IR_path\' al=\'Test\' />";
+				$IRhtml = $IRhtml . "<img style='width:85px;max-height:{$IR_Heights}' src='$IR_path' al='Test' />"; 
+				$IRjsjs = $IRjsjs . "<img style=\'width:85px;max-height:{$IR_Heights}\' src=\'$IR_path\' al=\'Test\' />";
 				if($IR_link <> "" ) 
 				{ 
 					$IRhtml = $IRhtml . "</a>"; 
@@ -127,8 +136,8 @@ class ReelWidget extends WP_Widget {
 			
 			if($IR_desc <> "" )
 			{
-				$IRhtml = $IRhtml . "<div style='padding-left:4px;'>$IR_desc</div>";	
-				$IRjsjs = $IRjsjs . "<div style=\'padding-left:4px;\'>$IR_desc</div>";	
+				$IRhtml = $IRhtml . "<div style='overflow:hidden;max-height:{$test_Height};padding-left:4px;'>$IR_desc</div>";	
+				$IRjsjs = $IRjsjs . "<div style=\'overflow:hidden;max-height:{$test_Height};padding-left:4px;\'>$IR_desc</div>";	
 			}
 			
 			$IRhtml = $IRhtml . "</div>";
@@ -203,7 +212,7 @@ function IRContent<?php echo $this->number ?>() {
 	IR_numScrolls<?php echo $this->number ?> 	= IR<?php echo $this->number ?>.length;
 	objIR<?php echo $this->number ?>.scrollTop 	= '0';
 	// start scrolling
-	setTimeout("scrollIR<?php echo $this->number ?>();", 2000);
+	setTimeout("scrollIR<?php echo $this->number ?>();", 4000);
 }
 
 </script>
@@ -260,8 +269,16 @@ return $new_instance;
         	       	
 	
 		) );
-		//extract($instance);
-		 // var_dump($instance);
+		
+		global $wpdb;
+		
+		$results = $wpdb -> get_results("select distinct IR_type from wp_multiple_reel where IR_widget_id='{$this->number}'", 'ARRAY_N');
+		$types = array();
+		foreach($results as $result):
+		$types[]=$result[0];		
+		endforeach;
+		
+		
         ?>
         <!--start of widget -->
       
@@ -280,8 +297,22 @@ return $new_instance;
 	<p>Text Length:<br/><input  style="width: 100px;" type="text" value="<?php echo $instance['IR_TextLength'] ?>"
 	 name="<?php echo  $this->get_field_name('IR_TextLength') ?>" id="<?php echo  $this->get_field_id('IR_TextLength') ?>" /> (YES/NO)</p>
 
-	<p>Gallery Group:<br/><input  style="width: 100px;" type="text" value="<?php echo $instance['IR_type'] ?>"
-	 name="<?php echo  $this->get_field_name('IR_type') ?>" id="<?php echo  $this->get_field_id('IR_type') ?>" /> </p>
+	<p>Select Group:<br/><select  style="width: 100px;" type="text"
+	 name="<?php echo  $this->get_field_name('IR_type') ?>" id="<?php echo  $this->get_field_id('IR_type') ?>" >
+	 <?php
+	 
+	 foreach($types as $type):
+	 if($type ==  $instance['IR_type'])
+	 echo "<option selected='selected'>$type</option>";
+	 else
+	 echo "<option>$type</option>"; 
+	 
+	 endforeach; 
+	 
+	 ?>
+	 
+	 </select>
+	  </p>
 	
 	<p>Random Option:<br/><input  style="width: 100px;" type="text" value="<?php echo $instance['IR_random']?>" 
 	name="<?php echo  $this->get_field_name('IR_random') ?>" id="<?php echo  $this->get_field_id('IR_random') ?>" /> (YES/NO)</p>

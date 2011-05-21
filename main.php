@@ -47,6 +47,8 @@ class multipleReel{
 			$data = array('IR_path', 'IR_link', 'IR_target', 'IR_title', 'IR_desc', 'IR_type', 'IR_status', 'IR_order');
 			if( isset($_REQUEST['data']) ){
 			$data = array_combine($data, $_REQUEST['data'] );
+			foreach ($data as $key =>$value)
+			 $data[$key] = stripslashes($value);
 			extract($data);
 			
 		      }
@@ -71,7 +73,7 @@ class multipleReel{
 					array('%d', '%s','%s', '%s','%s','%s','%d','%s','%s','%d', )	
 				 );
 				 $single_id = $wpdb -> get_var('SELECT max(IR_id) FROM wp_multiple_reel');
-				 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$single_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$single_id}' href='#'>Delete</a> </td></tr>";
+				 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_type}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$single_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$single_id}' href='#'>Delete</a> </td></tr>";
 				 exit;
 				 
 				 
@@ -103,7 +105,7 @@ class multipleReel{
 					array('%d', '%s','%s', '%s','%s','%s','%d','%s','%s','%d', ),
 					array('%d')	
 				 );		
-			 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$IR_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$IR_id}' href='#'>Delete</a> </td></tr>";
+			 echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_type}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$IR_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$IR_id}' href='#'>Delete</a> </td></tr>";
 
 			
 			    exit;
@@ -172,7 +174,10 @@ class multipleReel{
 				if(is_admin()):	
 						wp_admin_css( 'widgets' );
 						wp_enqueue_script('admin-widgets');			
+						wp_enqueue_script('thickbox');			
+						wp_enqueue_script('admin-widgets');			
 						wp_enqueue_script('reel_admin_script',plugins_url('/' , __FILE__).'js/script.js');
+						wp_enqueue_style('thickbox');
 						wp_register_style('admin_reel_css', plugins_url('/' , __FILE__).'css/style.css', false, '1.0.0');
 						wp_enqueue_style('admin_reel_css');
 			    endif;
@@ -199,7 +204,7 @@ class multipleReel{
 		
 
 	function CreateMenu(){
-	   add_options_page('Multiple Reel', 'wp-multilple-reel', 'administrator', __FILE__, array($this, 'OptionsPage'));
+	   add_options_page('Multiple Reel', 'WP Multiple Reel', 'administrator', __FILE__, array($this, 'OptionsPage'));
 
 
 	}
@@ -283,7 +288,11 @@ class multipleReel{
 	<!-- Start of table -->
 	<table id='table<?php echo $widget; ?>' width="100%">
       <tr>
-        <td colspan="2" style='width:100%' align="left" valign="middle">Enter image url:</td>
+        <td colspan="2" style='width:100%' align="left" valign="middle">Enter image url:
+        <span style= 'margin-left:20px' <a title="Add an Image" class="thickbox" href="media-upload.php?type=image&TB_iframe=1&width=640&height=350"><img onclick="return false;" alt="Add an Image" src="<?php echo admin_url()?>images/media-button-image.gif"></a></span>
+        
+        </td>     
+        
       </tr>
       <tr>
         <td colspan="2" style='width:100%' align="left" valign="middle"><input style='width:100%' name="IR_path<?php echo $widget; ?>" type="text" id="IR_path<?php echo $widget; ?>" value=""  /></td>
@@ -311,10 +320,10 @@ class multipleReel{
         <td colspan="2" align="left" valign="middle">Enter image description:</td>
       </tr>
       <tr>
-        <td colspan="2" align="left" valign="middle"><textarea style='width:100%' name="IR_desc<?php echo $widget; ?>" type="text" id="IR_desc<?php echo $widget; ?>" value="" > </textarea></td>
+        <td colspan="2" align="left" valign="middle"><textarea style='width:100%' name="IR_desc<?php echo $widget; ?>" type="text" id="IR_desc<?php echo $widget; ?>" value="" ></textarea></td>
       </tr>
       <tr>
-        <td colspan="2" align="left" valign="middle">Enter gallery type (This is to group the images):</td>
+        <td colspan="2" align="left" valign="middle">Enter Group Name:</td>
       </tr>
       <tr>
         <td colspan="2" align="left" valign="middle"><input name="IR_type<?php echo $widget; ?>" type="text" id="IR_type<?php echo $widget; ?>" value="widget"  /></td>
@@ -356,6 +365,7 @@ class multipleReel{
     
      <th>Title</th>
      <th>Target</th>
+     <th>Group</th>
      <th>Order</th>
      <th>Display</th>
      <th>Action</th>
@@ -368,7 +378,7 @@ class multipleReel{
      foreach($res as $key => $value)
      if(is_array($value) && !empty($value) ){
 		 extract($value); 
-         echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$IR_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$IR_id}' href='#'>Delete</a> </td></tr>";
+         echo "<tr><td>{$IR_title}</td><td>{$IR_target}</td><td>{$IR_type}</td><td>{$IR_order}</td><td>{$IR_status}</td><td class='actionGet'><a class='{$IR_id}' href='#' style='float:left;margin-right:20px' >Edit</a><a class='{$IR_id}' href='#'>Delete</a> </td></tr>";
      }
      
      
